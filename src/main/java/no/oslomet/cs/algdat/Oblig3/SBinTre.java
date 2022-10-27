@@ -148,6 +148,24 @@ public class SBinTre<T> {
         return antall;
     }
 
+    /////// Oppgave 3 ////////
+    private static <T> Node<T> førstePostorden(Node<T> p) {
+
+        while (true) {                                              //Så lenge p har barn skal metoden fortsette
+            if (p.venstre != null) p = p.venstre;                   //Sjekker at p har flere venstre barn
+            else if (p.høyre != null) p = p.høyre;                  //Sjekker at p har flere høyre barn
+            else return p;                                          //p har ingen flere barn igjen og vi har nådd første node.
+        }
+    }
+
+    private static <T> Node<T> nestePostorden(Node<T> p) {
+        if (p.forelder == null) return null;                        //hvis forelder noden er tom er det ingen neste node.
+
+        if (p.forelder.høyre == p) return p.forelder;               //sjekker om p er høyrebarn, nestepostorden er da forelder node til p
+        else if (p.forelder.høyre == null) return p.forelder;       //p er venstrebarn, sjekker om p har høyresøsken, nestepostorden er igjen foreldre node til p.
+        else return førstePostorden(p.forelder.høyre);              //her er p venstrebarn OG har høyresøsken, da kan vi bruke førstepostorden til å finne neste node.
+    }
+
     public boolean fjern(T verdi) {
         throw new UnsupportedOperationException("Ikke kodet ennå!");
     }
@@ -157,14 +175,6 @@ public class SBinTre<T> {
     }
 
     public void nullstill() {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
-    }
-
-    private static <T> Node<T> førstePostorden(Node<T> p) {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
-    }
-
-    private static <T> Node<T> nestePostorden(Node<T> p) {
         throw new UnsupportedOperationException("Ikke kodet ennå!");
     }
 

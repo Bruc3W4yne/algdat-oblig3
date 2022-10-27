@@ -3,9 +3,18 @@ package no.oslomet.cs.algdat.Oblig3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 public class SBinTre<T> {
+
+    public static void main(String[] args) {
+        Integer[] a = {4,7,2,9,5,10,8,1,3,6};
+        SBinTre<Integer> tre = new SBinTre<>(Comparator.naturalOrder());
+        for (int verdi : a) {tre.leggInn(verdi); }
+        System.out.println(tre.antall());  // Utskrift: 10
+    }
+
     private static final class Node<T>   // en indre nodeklasse
     {
         private T verdi;                   // nodens verdi
@@ -31,6 +40,7 @@ public class SBinTre<T> {
         }
 
     } // class Node
+
 
     private Node<T> rot;                            // peker til rotnoden
     private int antall;                             // antall noder
@@ -82,8 +92,33 @@ public class SBinTre<T> {
         return antall == 0;
     }
 
+    //////// Oppgave 1 ////////
     public boolean leggInn(T verdi) {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        Objects.requireNonNull(verdi, "Null verdier ikke tillat");
+
+        Node<T> p = rot, q = null;
+        int cmp = 0;
+
+        while (p != null) {
+            q = p;
+            cmp = comp.compare(verdi, p.verdi);
+            p = cmp < 0 ? p.venstre : p.høyre;
+        }
+
+        p = new Node<>(verdi, null);
+
+
+        if (q == null) rot = p;
+        else if (cmp < 0) q.venstre = p;
+        else q.høyre = p;
+
+        if (!(q == null)) p.forelder = q;
+        else p.forelder = null;
+
+        antall++;
+        endringer++;
+
+        return true;
     }
 
     public boolean fjern(T verdi) {

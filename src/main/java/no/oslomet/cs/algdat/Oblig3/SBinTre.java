@@ -1,30 +1,10 @@
 package no.oslomet.cs.algdat.Oblig3;
 
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SBinTre<T> {
-
-    public static void main(String[] args) {
-        SBinTre<Integer> tre =
-                new SBinTre<>(Comparator.naturalOrder());
-        int[] a = {10, 14, 6, 8, 1, 12, 7, 3, 11, 9, 13, 5, 2, 4};
-        for (int verdi : a) { tre.leggInn(verdi); }
-
-//Gjør om treet til et array
-        ArrayList<Integer> data = tre.serialize();
-
-//Lag nytt tre fra arrayet over
-        SBinTre<Integer> tre2 = SBinTre.deserialize(data, Comparator.naturalOrder());
-
-//Utskriften av tre og tre2 skal være identiske
-        System.out.println(tre.toStringPostOrder());
-        System.out.println(tre2.toStringPostOrder());
-    }
 
     private static final class Node<T>   // en indre nodeklasse
     {
@@ -224,17 +204,80 @@ public class SBinTre<T> {
         return binTre;
     }
 
+    /////// Oppgave 6 ////////
     public boolean fjern(T verdi) {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+
+        if (verdi == null) return false;
+
+        Node<T> p = rot, q = null;
+
+        while (p != null) {
+            int cmp = comp.compare(verdi, p.verdi);
+
+            if (cmp < 0) {
+                q = p;
+                p = p.venstre;
+            } else if (cmp > 0) {
+                q = p;
+                p = p.høyre;
+            } else {
+                break;
+            }
+        }
+
+        if (p == null) return false;
+
+        if (p.venstre == null || p.høyre == null) {
+            Node<T> b = p.venstre != null ? p.venstre : p.høyre;
+            if (p == rot) rot = b;
+            else if (p == q.venstre) q.venstre = b;
+            else q.høyre = b;
+
+            if (b != null) b.forelder = q;
+        } else {
+            Node<T> s = p, r = p.høyre;
+
+            while (r.venstre != null) {
+                s = r;
+                r = r.venstre;
+            }
+
+            p.verdi = r.verdi;
+
+            if (s != p) s.venstre = r.høyre;
+            else s.høyre = r.høyre;
+
+        }
+        antall--;
+        return true;
     }
 
     public int fjernAlle(T verdi) {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        int fjernet = 0;
+
+        if (tom()) return 0;
+
+        while (fjern(verdi)) {
+            fjernet++;
+        }
+        return fjernet;
     }
 
     public void nullstill() {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+
+        if (tom()) return;
+        Node<T> p = rot;
+
+        p = førstePostorden(p);
+
+        while (antall != 0) {
+            if (p != null) {
+                fjern(p.verdi);
+                p.verdi = null;
+                p = nestePostorden(p);
+            }
+            rot = null;
+            antall--;
+        }
     }
-
-
 } // ObligSBinTre

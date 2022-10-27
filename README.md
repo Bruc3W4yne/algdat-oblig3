@@ -25,10 +25,16 @@ Vi returnerer til slutt antall og vi vet nå hvor mange ganger gitt *verdi* fore
   - Metoden fortsetter helt til p ikke har et venstre barn og hopper så over til høyre subtre hvor den fortsetter helt til p ikke har et høyre barn.
   - Når begge subtre har blitt gått igjennom returnerer vi p
 - Del 2 nestePostOrden:
-  - nestePostOrden skal finne noden etter  den som ble returnert i førstePostOrden. Da begynner vi først med en sjekk om p har søsken for å bestemme om neste node er høyre, venstre eller foreldre noden.
+  - nestePostOrden skal finne noden etter/før nåværende node. Da begynner vi først med en sjekk om p har søsken for å bestemme om neste node er høyre, venstre eller foreldre noden.
   - er foreldre noden tom er det ingen neste node
   - er p høyrebarn er det foreldre som er neste ndoe
   - er p venstrebarn er det foreldre som er neste node
   - er p venstrebarn **OG** har høyresøsken så er det den som er neste node da regelen er venstre, høyre, node.
 
 ### Oppgave 4
+**Oppgave 4** tar også for seg traversering ved hjelp av postorden, men denne gangen skal vi gå igjennom hele treet. Vi begynner med postorden metoden.
+Vi lager først en ny node og setter den til å være rot noden. Vi bruker deretter førstePostOrden til å sette p. Vi kan bruke nestePostOrden til å finne p sin neste og gjør dette, så sant det er flere noder igjen, helt til vi når siste node. Vi har nå traversert igjennom hele treet.\
+\
+postordenRecursive kan kalle på seg selv så alt vi trenger å sjekke her er om p har flere barn. Vi sjekker først venstre subtre, deretter høyre subtre helt til vi ikke har flere noder igjen.
+
+### Oppgave 5

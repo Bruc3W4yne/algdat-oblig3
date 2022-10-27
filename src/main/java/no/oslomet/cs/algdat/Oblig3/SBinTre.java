@@ -5,19 +5,25 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SBinTre<T> {
 
     public static void main(String[] args) {
-        Integer[] a = {4,7,2,9,4,10,8,7,4,6};
-        SBinTre<Integer> tre = new SBinTre<>(Comparator.naturalOrder());
+        SBinTre<Integer> tre =
+                new SBinTre<>(Comparator.naturalOrder());
+        int[] a = {10, 14, 6, 8, 1, 12, 7, 3, 11, 9, 13, 5, 2, 4};
         for (int verdi : a) { tre.leggInn(verdi); }
 
-        System.out.println(tre.antall());      // Utskrift: 10
-        System.out.println(tre.antall(5));     // Utskrift: 0
-        System.out.println(tre.antall(4));     // Utskrift: 3
-        System.out.println(tre.antall(7));     // Utskrift: 2
-        System.out.println(tre.antall(10));    // Utskrift: 1
+//Gjør om treet til et array
+        ArrayList<Integer> data = tre.serialize();
+
+//Lag nytt tre fra arrayet over
+        SBinTre<Integer> tre2 = SBinTre.deserialize(data, Comparator.naturalOrder());
+
+//Utskriften av tre og tre2 skal være identiske
+        System.out.println(tre.toStringPostOrder());
+        System.out.println(tre2.toStringPostOrder());
     }
 
     private static final class Node<T>   // en indre nodeklasse
@@ -159,11 +165,63 @@ public class SBinTre<T> {
     }
 
     private static <T> Node<T> nestePostorden(Node<T> p) {
+
         if (p.forelder == null) return null;                        //hvis forelder noden er tom er det ingen neste node.
 
         if (p.forelder.høyre == p) return p.forelder;               //sjekker om p er høyrebarn, nestepostorden er da forelder node til p
         else if (p.forelder.høyre == null) return p.forelder;       //p er venstrebarn, sjekker om p har høyresøsken, nestepostorden er igjen foreldre node til p.
         else return førstePostorden(p.forelder.høyre);              //her er p venstrebarn OG har høyresøsken, da kan vi bruke førstepostorden til å finne neste node.
+    }
+
+    //////// Oppgave 4 ///////
+    public void postorden(Oppgave<? super T> oppgave) {
+
+        Node<T> p = rot;                                            // setter p lik rot node
+
+        p = førstePostorden(p);                                     //finner første node i postorden
+
+        while (p != null) {                                         //så lenge det er flere noder skal metoden fortsette
+            oppgave.utførOppgave(p.verdi);                          //skriver ut verdien til noden
+            p = nestePostorden(p);                                  //siden vi er inne i en løkke kan vi kalle nestePostOrden og få neste node helt til det ikke er fler.
+        }
+    }
+
+    public void postordenRecursive(Oppgave<? super T> oppgave) {
+        postordenRecursive(rot, oppgave);
+    }
+
+    private void postordenRecursive(Node<T> p, Oppgave<? super T> oppgave) {
+
+        if (p.venstre != null) postordenRecursive(p.venstre, oppgave);              //så lenge p har venstre barn skal vi fortsette i venstre subtre
+
+        if (p.høyre != null) postordenRecursive(p.høyre, oppgave);                  //så lenge p har høyre barn skal vi fortsette i høyre subtre
+
+        oppgave.utførOppgave(p.verdi);                                              //skriver ut verdi til node.
+    }
+
+    ////// Oppgave 5 ///////
+    public ArrayList<T> serialize() {
+        ArrayList<Node<T>> qeue = new ArrayList<>();
+        ArrayList<T> printedList = new ArrayList<>();
+
+        qeue.add(rot);
+
+        while (!qeue.isEmpty()) {
+            Node<T> p = qeue.remove(0);
+            printedList.add(p.verdi);
+
+            if (p.venstre != null) qeue.add(p.venstre);
+            if (p.høyre != null) qeue.add(p.høyre);
+        }
+        return printedList;
+    }
+
+    static <K> SBinTre<K> deserialize(ArrayList<K> data, Comparator<? super K> c) {
+        SBinTre<K> binTre = new SBinTre<>(c);
+        for (K verdi : data) {
+            binTre.leggInn(verdi);
+        }
+        return binTre;
     }
 
     public boolean fjern(T verdi) {
@@ -175,26 +233,6 @@ public class SBinTre<T> {
     }
 
     public void nullstill() {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
-    }
-
-    public void postorden(Oppgave<? super T> oppgave) {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
-    }
-
-    public void postordenRecursive(Oppgave<? super T> oppgave) {
-        postordenRecursive(rot, oppgave);
-    }
-
-    private void postordenRecursive(Node<T> p, Oppgave<? super T> oppgave) {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
-    }
-
-    public ArrayList<T> serialize() {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
-    }
-
-    static <K> SBinTre<K> deserialize(ArrayList<K> data, Comparator<? super K> c) {
         throw new UnsupportedOperationException("Ikke kodet ennå!");
     }
 

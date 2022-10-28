@@ -137,32 +137,32 @@ public class SBinTre<T> {
     /////// Oppgave 3 ////////
     private static <T> Node<T> førstePostorden(Node<T> p) {
 
-        while (true) {                                              //Så lenge p har barn skal metoden fortsette
-            if (p.venstre != null) p = p.venstre;                   //Sjekker at p har flere venstre barn
-            else if (p.høyre != null) p = p.høyre;                  //Sjekker at p har flere høyre barn
-            else return p;                                          //p har ingen flere barn igjen og vi har nådd første node.
+        while (true) {
+            if (p.venstre != null) p = p.venstre;
+            else if (p.høyre != null) p = p.høyre;
+            else return p;
         }
     }
 
     private static <T> Node<T> nestePostorden(Node<T> p) {
 
-        if (p.forelder == null) return null;                        //hvis forelder noden er tom er det ingen neste node.
+        if (p.forelder == null) return null;
 
-        if (p.forelder.høyre == p) return p.forelder;               //sjekker om p er høyrebarn, nestepostorden er da forelder node til p
-        else if (p.forelder.høyre == null) return p.forelder;       //p er venstrebarn, sjekker om p har høyresøsken, nestepostorden er igjen foreldre node til p.
-        else return førstePostorden(p.forelder.høyre);              //her er p venstrebarn OG har høyresøsken, da kan vi bruke førstepostorden til å finne neste node.
+        if (p.forelder.høyre == p) return p.forelder;
+        else if (p.forelder.høyre == null) return p.forelder;
+        else return førstePostorden(p.forelder.høyre);
     }
 
     //////// Oppgave 4 ///////
     public void postorden(Oppgave<? super T> oppgave) {
 
-        Node<T> p = rot;                                            // setter p lik rot node
+        Node<T> p = rot;
 
-        p = førstePostorden(p);                                     //finner første node i postorden
+        p = førstePostorden(p);
 
-        while (p != null) {                                         //så lenge det er flere noder skal metoden fortsette
-            oppgave.utførOppgave(p.verdi);                          //skriver ut verdien til noden
-            p = nestePostorden(p);                                  //siden vi er inne i en løkke kan vi kalle nestePostOrden og få neste node helt til det ikke er fler.
+        while (p != null) {
+            oppgave.utførOppgave(p.verdi);
+            p = nestePostorden(p);
         }
     }
 
@@ -172,11 +172,11 @@ public class SBinTre<T> {
 
     private void postordenRecursive(Node<T> p, Oppgave<? super T> oppgave) {
 
-        if (p.venstre != null) postordenRecursive(p.venstre, oppgave);              //så lenge p har venstre barn skal vi fortsette i venstre subtre
+        if (p.venstre != null) postordenRecursive(p.venstre, oppgave);
 
-        if (p.høyre != null) postordenRecursive(p.høyre, oppgave);                  //så lenge p har høyre barn skal vi fortsette i høyre subtre
+        if (p.høyre != null) postordenRecursive(p.høyre, oppgave);
 
-        oppgave.utførOppgave(p.verdi);                                              //skriver ut verdi til node.
+        oppgave.utførOppgave(p.verdi);
     }
 
     ////// Oppgave 5 ///////
